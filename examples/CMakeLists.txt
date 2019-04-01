@@ -1,0 +1,1 @@
+add_executable(example_safe_cast example_safe_cast.cpp)

@@ -1,0 +1,44 @@
+sudo: required
+
+group: travis_latest
+
+os:
+  - linux
+
+dist: xenial
+
+language: cpp
+
+
+compiler:
+  - clang
+  - gcc
+
+env:
+  - CPP_OPTIMIZATION=Release
+
+addons:
+  apt:
+    update: true
+    packages:
+      - libboost-all-dev
+      - libboost-test-dev
+  
+  homebrew:
+    update: true
+    packages:
+      - boost
+
+cache: ccache
+
+install:
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install boost-msvc-12; fi
+  - mkdir build && cd build
+  - cmake ../ -DCMAKE_BUILD_TYPE=${CPP_OPTIMIZATION}
+  - VERBOSE=1 cmake --build .
+
+script:
+  - while(true); do sleep 9m; echo "watchdog signal"; done &
+  - WATCHDOG_PID=$!
+  - ctest ../
+  - kill $WATCHDOG_PID
